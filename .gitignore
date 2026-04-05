@@ -1,0 +1,13 @@
+node_modules
+dist
+build
+.DS_Store
+.env
+*.log
+out
+
+# Generated assets (large — regenerate with: npm run generate-assets-v2)
+public/assets/*.jpg
+public/assets/*.mp3
+public/assets/*.mp4
+public/assets/generation-state*.json

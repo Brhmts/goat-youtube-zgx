@@ -1,0 +1,40 @@
+{
+  "name": "my-video",
+  "version": "1.0.0",
+  "description": "My Remotion video",
+  "repository": {},
+  "license": "UNLICENSED",
+  "private": true,
+  "dependencies": {
+    "@remotion/cli": "4.0.420",
+    "@remotion/tailwind-v4": "4.0.420",
+    "follow-redirects": "^1.15.11",
+    "react": "19.2.3",
+    "react-dom": "19.2.3",
+    "remotion": "4.0.420",
+    "tailwindcss": "4.0.0"
+  },
+  "devDependencies": {
+    "@remotion/eslint-config-flat": "4.0.420",
+    "@types/react": "19.2.7",
+    "@types/web": "0.0.166",
+    "dotenv": "^17.2.4",
+    "eslint": "9.19.0",
+    "prettier": "3.6.0",
+    "tsx": "^4.21.0",
+    "typescript": "5.9.3"
+  },
+  "scripts": {
+    "dev": "remotion studio",
+    "build": "remotion bundle",
+    "upgrade": "remotion upgrade",
+    "lint": "eslint src && tsc",
+    "generate-assets": "tsx scripts/generate-assets.ts",
+    "generate-assets-v2": "tsx scripts/generate-assets-v2.ts",
+    "create-placeholders": "tsx scripts/create-placeholders.ts",
+    "generate-assets-aiwars": "tsx scripts/generate-ai-wars-assets.ts"
+  },
+  "sideEffects": [
+    "*.css"
+  ]
+}
