@@ -84,8 +84,8 @@ const main = async () => {
         const batch = scenes.slice(i, i + BATCH_SIZE);
         console.log(`\n━━━ Batch ${Math.floor(i / BATCH_SIZE) + 1} (Scenes ${batch[0].id}–${batch[batch.length - 1].id}) ━━━`);
 
-        // ── PHASE 1: Voice Generation (skipped if no TTS key) ────
-        const hasTTSKey = !!process.env.ELEVENLABS_API_KEY;
+        // ── PHASE 1: Voice Generation ─────────────────────────────
+        const hasTTSKey = !!(process.env.KIE_AI_API_KEY || process.env.ELEVENLABS_API_KEY);
         if (hasTTSKey) {
             for (const scene of batch) {
                 const key = `${projectId}-scene-${scene.id}`;

@@ -195,7 +195,7 @@ const downloadFile = async (url: string, outputPath: string): Promise<void> => {
 };
 
 // ── Public API ──────────────────────────────────────────────────
-export const generateVoice = async (text: string, outputPath: string, voiceId: string = DEFAULT_VOICE_ID): Promise<boolean> => {
+export const generateVoice = async (text: string, outputPath: string, voiceId: string = DEFAULT_VOICE): Promise<boolean> => {
     // Try Kie.ai proxy first (uses KIE_AI_API_KEY)
     if (KIE_API_KEY) {
         return generateVoiceViaKie(text, outputPath, voiceId);

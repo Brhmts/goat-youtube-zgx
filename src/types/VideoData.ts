@@ -28,4 +28,5 @@ export interface VideoData {
     useVideoClips?: boolean; // true = generate video clips from images (image-to-video pipeline)
     style?: StylePreset; // Consistent style across all scenes
     costMode?: 'budget' | 'standard' | 'premium'; // budget=1K+standard, standard=2K+standard, premium=2K+pro
+    hasVoice?: boolean; // true = voice files generated, render with audio
 }

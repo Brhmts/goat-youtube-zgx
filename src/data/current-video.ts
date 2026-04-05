@@ -10,5 +10,6 @@ export const currentVideo: VideoData = {
     scenes: osmanliScenes,
     useVideoClips: true,
     style: OSMANLI_STYLE,
-    costMode: 'budget', // 1K images + standard video = ~$1/min
+    costMode: 'budget',
+    hasVoice: true, // TTS via Kie.ai (ElevenLabs proxy)
 };

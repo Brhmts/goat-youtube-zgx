@@ -4,11 +4,7 @@ import { Scene } from "./components/Scene";
 import { VideoScene } from "./components/VideoScene";
 
 export const VideoComposition: React.FC = () => {
-    const { scenes, projectId, useVideoClips } = currentVideo;
-
-    // If no TTS was generated, don't pass audio paths
-    // This is controlled by a flag in the video data
-    const hasVoiceFiles = false; // Set to true when TTS is available
+    const { scenes, projectId, useVideoClips, hasVoice } = currentVideo;
 
     return (
         <AbsoluteFill style={{ backgroundColor: "black" }}>
@@ -16,7 +12,7 @@ export const VideoComposition: React.FC = () => {
                 {scenes.map((scene) => {
                     const imagePath = `/assets/${projectId}-scene-${scene.id}-image.jpg`;
                     const videoPath = `/assets/${projectId}-scene-${scene.id}-video.mp4`;
-                    const audioPath = hasVoiceFiles
+                    const audioPath = hasVoice
                         ? `/assets/${projectId}-scene-${scene.id}-voice.mp3`
                         : undefined;
 
