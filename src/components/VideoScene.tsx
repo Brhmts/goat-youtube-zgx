@@ -1,93 +1,53 @@
-import { AbsoluteFill, Audio, OffthreadVideo, interpolate, useCurrentFrame, useVideoConfig, staticFile } from 'remotion';
+import { AbsoluteFill, Loop, OffthreadVideo, staticFile, useVideoConfig } from 'remotion';
 import React from 'react';
+import { MIN_VIDEO_PLAYBACK_RATE, VIDEO_TAIL_TRIM_SEC } from '../config';
+import { SceneOverlay } from './SceneOverlay';
 
 interface VideoSceneProps {
     videoSrc: string;       // Path to video clip (from image-to-video)
-    audioSrc?: string;      // Path to voice narration (optional)
+    videoDurationSec: number; // Measured length of the clip
+    audioSrc?: string | null; // Path to voice narration (optional)
     subtitle?: string;
     title?: string;
 }
 
+/**
+ * Plays an image-to-video clip for the whole scene.
+ * The frozen last second of the clip is never shown. If the scene is longer
+ * than the usable part, the clip is slowed down (down to MIN_VIDEO_PLAYBACK_RATE)
+ * and, if that is still not enough, looped.
+ */
 export const VideoScene: React.FC<VideoSceneProps> = ({
     videoSrc,
+    videoDurationSec,
     audioSrc,
     subtitle,
     title,
 }) => {
-    const frame = useCurrentFrame();
-    const { durationInFrames } = useVideoConfig();
+    const { fps, durationInFrames } = useVideoConfig();
 
-    // Fade transition
-    const FADE_DURATION = 15;
-    const opacity = interpolate(
-        frame,
-        [0, FADE_DURATION, durationInFrames - FADE_DURATION, durationInFrames],
-        [0, 1, 1, 0],
-        { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' }
+    const usableSec = Math.max(videoDurationSec - VIDEO_TAIL_TRIM_SEC, 1);
+    const sceneSec = durationInFrames / fps;
+    const playbackRate = sceneSec <= usableSec ? 1 : Math.max(usableSec / sceneSec, MIN_VIDEO_PLAYBACK_RATE);
+    // How many output frames one pass over the usable part of the clip lasts
+    const passFrames = Math.floor((usableSec / playbackRate) * fps);
+
+    const video = (
+        <OffthreadVideo
+            src={staticFile(videoSrc)}
+            style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+            muted
+            playbackRate={playbackRate}
+        />
     );
 
     return (
         <AbsoluteFill style={{ backgroundColor: 'black' }}>
-            {/* Video Background — trim last 1s to avoid freeze frame */}
             <AbsoluteFill style={{ overflow: 'hidden' }}>
-                <OffthreadVideo
-                    src={staticFile(videoSrc)}
-                    style={{
-                        width: '100%',
-                        height: '100%',
-                        objectFit: 'cover',
-                    }}
-                    muted
-                    endAt={150} // 5 seconds at 30fps — skip last 1s freeze
-                />
+                {passFrames < durationInFrames ? <Loop durationInFrames={passFrames}>{video}</Loop> : video}
             </AbsoluteFill>
 
-            {/* Voice Narration (optional) */}
-            {audioSrc && <Audio src={staticFile(audioSrc)} />}
-
-            {/* Lower Third Title */}
-            {title && (
-                <AbsoluteFill style={{ justifyContent: 'flex-end', padding: 40, paddingBottom: 100 }}>
-                    <div style={{
-                        backgroundColor: 'rgba(0,0,0,0.7)',
-                        padding: '20px',
-                        borderRadius: '10px',
-                        borderLeft: '5px solid #d4af37',
-                        color: 'white',
-                        fontFamily: 'sans-serif',
-                        width: 'fit-content',
-                        maxWidth: '60%',
-                        fontSize: '24px',
-                        fontWeight: 'bold',
-                        opacity: opacity
-                    }}>
-                        {title}
-                    </div>
-                </AbsoluteFill>
-            )}
-
-            {/* Subtitles */}
-            {subtitle && (
-                <AbsoluteFill style={{ justifyContent: 'flex-end', alignItems: 'center', paddingBottom: 50 }}>
-                    <div style={{
-                        fontFamily: 'sans-serif',
-                        fontSize: 32,
-                        color: 'white',
-                        textShadow: '2px 2px 4px rgba(0,0,0,0.8)',
-                        textAlign: 'center',
-                        maxWidth: '80%',
-                        backgroundColor: 'rgba(0,0,0,0.5)',
-                        padding: '10px 20px',
-                        borderRadius: '8px',
-                        opacity: opacity
-                    }}>
-                        {subtitle}
-                    </div>
-                </AbsoluteFill>
-            )}
-
-            {/* Fade Transition */}
-            <AbsoluteFill style={{ backgroundColor: 'black', opacity: 1 - opacity }} />
+            <SceneOverlay audioSrc={audioSrc} subtitle={subtitle} title={title} />
         </AbsoluteFill>
     );
 };

@@ -1,128 +1,130 @@
 /**
- * Smart Split-Render Script
- * 
- * This script automates the rendering process by:
- * 1. Reading the current video configuration (src/data/current-video.ts)
- * 2. Calculating optimal split points (every ~60s, at scene boundaries)
- * 3. Rendering each part using Remotion CLI
- * 4. Stitching parts together using ffmpeg-static
+ * Split-Render Script
+ *
+ * 1. Bundles the project and resolves the "Video" composition — this runs
+ *    calculateMetadata, so scene lengths already include the real voice-over durations.
+ * 2. Splits the video into parts of at most MAX_PART_SEC, cutting only at scene boundaries.
+ * 3. Renders each part with Remotion and stitches them together with ffmpeg.
+ *
+ * Usage: npm run render            (MAX_PART_SEC=120 npm run render to change the part size)
  */
 
-import { currentVideo } from '../src/data/current-video';
-import { execSync } from 'child_process';
 import path from 'path';
 import fs from 'fs';
+import { execFileSync } from 'child_process';
+import { bundle } from '@remotion/bundler';
+import { renderMedia, selectComposition } from '@remotion/renderer';
+import { enableTailwind } from '@remotion/tailwind-v4';
 import ffmpeg from 'ffmpeg-static';
+import { currentVideo } from '../src/data/current-video';
+import type { VideoProps } from '../src/types/VideoData';
 
-const MAX_PART_DURATION_SEC = 60; // Max duration per part in seconds
-const FPS = 30;
-
+const MAX_PART_SEC = Number(process.env.MAX_PART_SEC) || 60;
+const CONCURRENCY = Number(process.env.RENDER_CONCURRENCY) || 2;
 const OUTPUT_DIR = path.join(process.cwd(), 'out');
-const PUBLIC_DIR = path.join(process.cwd(), 'public'); // Final output goes here? Or just use out.
 
-if (!fs.existsSync(OUTPUT_DIR)) {
-    fs.mkdirSync(OUTPUT_DIR, { recursive: true });
-}
-
-// 1. Calculate Split Points
 interface RenderPart {
     index: number;
     startFrame: number;
-    endFrame: number;
+    endFrame: number; // inclusive
     filename: string;
 }
 
-const parts: RenderPart[] = [];
-let currentStartFrame = 0;
-let currentDurationSec = 0;
-let partIndex = 1;
+/** Greedily packs whole scenes into parts of at most maxFrames (a single longer scene gets its own part). */
+const splitIntoParts = (sceneFrames: number[], maxFrames: number): RenderPart[] => {
+    const parts: RenderPart[] = [];
+    let start = 0;
+    let length = 0;
 
-console.log(`Analyzing ${currentVideo.scenes.length} scenes for split points...`);
-
-for (let i = 0; i < currentVideo.scenes.length; i++) {
-    const scene = currentVideo.scenes[i];
-    const sceneFrames = Math.ceil(scene.duration * FPS);
-
-    // Check if adding this scene exceeds calculation, OR if it's the last scene
-    const isLastScene = i === currentVideo.scenes.length - 1;
-
-    // Tentative new duration
-    if ((currentDurationSec + scene.duration > MAX_PART_DURATION_SEC) && currentDurationSec > 0) {
-        // Current part is full, push it WITHOUT this scene
-        const endFrame = currentStartFrame + Math.ceil(currentDurationSec * FPS) - 1;
+    const flush = () => {
+        const index = parts.length + 1;
         parts.push({
-            index: partIndex,
-            startFrame: currentStartFrame,
-            endFrame: endFrame,
-            filename: `part_${partIndex.toString().padStart(3, '0')}.mp4`
+            index,
+            startFrame: start,
+            endFrame: start + length - 1,
+            filename: `part_${index.toString().padStart(3, '0')}.mp4`,
         });
+        start += length;
+        length = 0;
+    };
 
-        console.log(`Part ${partIndex}: Frames ${currentStartFrame}-${endFrame} (~${currentDurationSec.toFixed(1)}s)`);
+    for (const frames of sceneFrames) {
+        if (length > 0 && length + frames > maxFrames) flush();
+        length += frames;
+    }
+    if (length > 0) flush();
+    return parts;
+};
 
-        // Reset for next part, starting with THIS scene
-        partIndex++;
-        currentStartFrame = endFrame + 1;
-        currentDurationSec = scene.duration;
-    } else {
-        // Add scene to current part
-        currentDurationSec += scene.duration;
+const main = async () => {
+    if (!ffmpeg) throw new Error('ffmpeg-static binary not found for this platform');
+    fs.mkdirSync(OUTPUT_DIR, { recursive: true });
+
+    console.log('Bundling project...');
+    const serveUrl = await bundle({
+        entryPoint: path.join(process.cwd(), 'src', 'index.ts'),
+        // remotion.config.ts is not applied when using the Node APIs, so repeat its settings here
+        webpackOverride: (config) => enableTailwind(config),
+    });
+
+    const composition = await selectComposition({ serveUrl, id: 'Video', inputProps: {} });
+    const { resolvedScenes } = composition.props as VideoProps;
+    const fps = composition.fps;
+
+    console.log(
+        `Video: ${resolvedScenes.length} scenes, ${(composition.durationInFrames / fps).toFixed(1)}s, ` +
+        `${composition.width}x${composition.height}@${fps}fps`,
+    );
+
+    const parts = splitIntoParts(resolvedScenes.map((s) => s.durationInFrames), MAX_PART_SEC * fps);
+    for (const part of parts) {
+        const sec = (part.endFrame - part.startFrame + 1) / fps;
+        console.log(`Part ${part.index}: frames ${part.startFrame}-${part.endFrame} (~${sec.toFixed(1)}s)`);
     }
 
-    // Handle very last scene flush
-    if (isLastScene) {
-        const endFrame = currentStartFrame + Math.ceil(currentDurationSec * FPS) - 1;
-        parts.push({
-            index: partIndex,
-            startFrame: currentStartFrame,
-            endFrame: endFrame,
-            filename: `part_${partIndex.toString().padStart(3, '0')}.mp4`
+    for (const part of parts) {
+        const outputLocation = path.join(OUTPUT_DIR, part.filename);
+        console.log(`\nRendering part ${part.index}/${parts.length} → ${outputLocation}`);
+        let lastPct = -1;
+        await renderMedia({
+            composition,
+            serveUrl,
+            codec: 'h264',
+            outputLocation,
+            inputProps: composition.props,
+            frameRange: [part.startFrame, part.endFrame],
+            imageFormat: 'jpeg',
+            concurrency: CONCURRENCY,
+            overwrite: true,
+            chromiumOptions: { gl: 'angle' },
+            onProgress: ({ progress }) => {
+                const pct = Math.floor(progress * 10) * 10;
+                if (pct !== lastPct) {
+                    lastPct = pct;
+                    console.log(`  ${pct}%`);
+                }
+            },
         });
-        console.log(`Part ${partIndex}: Frames ${currentStartFrame}-${endFrame} (~${currentDurationSec.toFixed(1)}s)`);
-    }
-}
-
-// 2. Render Parts
-console.log(`\nStarting render of ${parts.length} parts...`);
-
-for (const part of parts) {
-    const outputFile = path.join(OUTPUT_DIR, part.filename);
-    console.log(`\nRendering Part ${part.index}/${parts.length}: ${outputFile}`);
-    console.log(`Frames: ${part.startFrame} - ${part.endFrame}`);
-
-    try {
-        // npx remotion render Video out/filename --frames=START-END
-        const cmd = `npx remotion render Video ${outputFile} --frames=${part.startFrame}-${part.endFrame} --concurrency=2 --gl=angle`;
-        execSync(cmd, { stdio: 'inherit' });
         console.log(`✔ Part ${part.index} complete.`);
-    } catch (e) {
-        console.error(`❌ Failed to render Part ${part.index}`);
-        process.exit(1);
     }
-}
 
-// 3. Stitch Parts
-console.log(`\nStitching parts...`);
-const listFile = path.join(OUTPUT_DIR, 'ffmpeg_list.txt');
-const fileContent = parts.map(p => `file '${p.filename}'`).join('\n');
-fs.writeFileSync(listFile, fileContent);
+    const finalPath = path.join(OUTPUT_DIR, `${currentVideo.projectId}-final.mp4`);
 
-const finalFilename = `${currentVideo.projectId}-final.mp4`;
-const finalPath = path.join(OUTPUT_DIR, finalFilename);
-
-// Delete existing final file
-if (fs.existsSync(finalPath)) {
-    fs.unlinkSync(finalPath);
-}
-
-try {
-    // ffmpeg -f concat -safe 0 -i list.txt -c copy output.mp4
-    if (!ffmpeg) throw new Error("ffmpeg-static not found");
-
-    const cmd = `"${ffmpeg}" -f concat -safe 0 -i "${listFile}" -c copy "${finalPath}"`;
-    execSync(cmd, { stdio: 'inherit' });
+    if (parts.length === 1) {
+        fs.copyFileSync(path.join(OUTPUT_DIR, parts[0].filename), finalPath);
+    } else {
+        console.log(`\nStitching ${parts.length} parts...`);
+        const listFile = path.join(OUTPUT_DIR, 'ffmpeg_list.txt');
+        fs.writeFileSync(listFile, parts.map((p) => `file '${p.filename}'`).join('\n'));
+        execFileSync(ffmpeg, ['-y', '-f', 'concat', '-safe', '0', '-i', listFile, '-c', 'copy', finalPath], {
+            stdio: 'inherit',
+        });
+    }
 
     console.log(`\nSUCCESS! Video created at:\n${finalPath}`);
-} catch (e) {
-    console.error(`❌ Stitching failed:`, e);
+};
+
+main().catch((err) => {
+    console.error('❌ Render failed:', err);
     process.exit(1);
-}
+});

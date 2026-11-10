@@ -1,14 +1,18 @@
 {
-  "name": "my-video",
+  "name": "goat-youtube",
   "version": "1.0.0",
-  "description": "My Remotion video",
+  "description": "AI-generated documentary videos with Remotion (Kie.ai images/video + ElevenLabs narration)",
   "repository": {},
   "license": "UNLICENSED",
   "private": true,
   "dependencies": {
+    "@remotion/bundler": "4.0.420",
     "@remotion/cli": "4.0.420",
+    "@remotion/renderer": "4.0.420",
     "@remotion/tailwind-v4": "4.0.420",
-    "follow-redirects": "^1.15.11",
+    "dotenv": "^17.2.4",
+    "ffmpeg-static": "^5.3.0",
+    "mediabunny": "1.29.0",
     "react": "19.2.3",
     "react-dom": "19.2.3",
     "remotion": "4.0.420",
@@ -18,7 +22,6 @@
     "@remotion/eslint-config-flat": "4.0.420",
     "@types/react": "19.2.7",
     "@types/web": "0.0.166",
-    "dotenv": "^17.2.4",
     "eslint": "9.19.0",
     "prettier": "3.6.0",
     "tsx": "^4.21.0",
@@ -30,9 +33,7 @@
     "upgrade": "remotion upgrade",
     "lint": "eslint src && tsc",
     "generate-assets": "tsx scripts/generate-assets.ts",
-    "generate-assets-v2": "tsx scripts/generate-assets-v2.ts",
-    "create-placeholders": "tsx scripts/create-placeholders.ts",
-    "generate-assets-aiwars": "tsx scripts/generate-ai-wars-assets.ts"
+    "render": "tsx scripts/render-video.ts"
   },
   "sideEffects": [
     "*.css"

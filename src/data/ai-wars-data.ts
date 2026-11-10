@@ -1,11 +1,7 @@
-export interface SceneData {
-    id: number;
-    duration: number; // seconds
-    imagePrompt: string;
-    voiceText: string;
-    description: string;
-}
+import type { SceneData } from '../types/VideoData';
 
+// Eski "AI Savaşları" projesi. Tekrar üretmek için current-video.ts içinde
+// projectId: 'aiwars' ve scenes: aiWarsScenes kullanın (eski asset adlarıyla uyumlu).
 export const aiWarsScenes: SceneData[] = [
     {
         id: 1,
