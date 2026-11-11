@@ -1,0 +1,83 @@
+{
+  "id": "moskova-kedileri",
+  "title": "Moskova Kedileri (çalışma adı)",
+  "language": "tr",
+  "premise": "İstanbul son zamanlarda dünyanın kedi başkenti gibi oldu: turistler gelip kedileri çekip gidiyor. Moskova'da bunu gören 5 sokak kedisi İstanbul'a seyahat etmeye karar verir; dizi, yolculuk planlarını ve maceralarını anlatır.",
+  "style": {
+    "suffix": "2D hand-drawn animated series style, clean bold outlines, flat cel shading with soft gradients, vibrant warm colors, expressive cartoon cats with large readable eyes, consistent character design, 16:9 cinematic composition",
+    "negativeHint": "photorealism, 3D render, text, watermark, extra limbs, inconsistent markings",
+    "references": []
+  },
+  "narrator": {
+    "name": "Anlatıcı",
+    "voice": {
+      "kie": "Daniel"
+    }
+  },
+  "codex": [
+    {
+      "id": "kedi-1",
+      "type": "character",
+      "name": "Kedi 1",
+      "aliases": [],
+      "references": [],
+      "voice": {
+        "kie": "Charlie"
+      },
+      "color": "#ffb347",
+      "notes": "YER TUTUCU — isim, kişilik, geçmiş ve görünüm detaylarını yazın."
+    },
+    {
+      "id": "kedi-2",
+      "type": "character",
+      "name": "Kedi 2",
+      "aliases": [],
+      "references": [],
+      "voice": {
+        "kie": "Lily"
+      },
+      "color": "#7ec8e3",
+      "notes": "YER TUTUCU — isim, kişilik, geçmiş ve görünüm detaylarını yazın."
+    },
+    {
+      "id": "kedi-3",
+      "type": "character",
+      "name": "Kedi 3",
+      "aliases": [],
+      "references": [],
+      "voice": {
+        "kie": "George"
+      },
+      "color": "#b39ddb",
+      "notes": "YER TUTUCU — isim, kişilik, geçmiş ve görünüm detaylarını yazın."
+    },
+    {
+      "id": "kedi-4",
+      "type": "character",
+      "name": "Kedi 4",
+      "aliases": [],
+      "references": [],
+      "voice": {
+        "kie": "Jessica"
+      },
+      "color": "#a5d6a7",
+      "notes": "YER TUTUCU — isim, kişilik, geçmiş ve görünüm detaylarını yazın."
+    },
+    {
+      "id": "kedi-5",
+      "type": "character",
+      "name": "Kedi 5",
+      "aliases": [],
+      "references": [],
+      "voice": {
+        "kie": "Liam"
+      },
+      "color": "#f48fb1",
+      "notes": "YER TUTUCU — isim, kişilik, geçmiş ve görünüm detaylarını yazın."
+    }
+  ],
+  "generation": {
+    "costMode": "standard",
+    "videoClips": false
+  }
+}

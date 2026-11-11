@@ -6,7 +6,8 @@
  * 2. Splits the video into parts of at most MAX_PART_SEC, cutting only at scene boundaries.
  * 3. Renders each part with Remotion and stitches them together with ffmpeg.
  *
- * Usage: npm run render            (MAX_PART_SEC=120 npm run render to change the part size)
+ * Usage: npm run render -- <series>/<NN>          e.g. npm run render -- moskova-kedileri/01
+ *        MAX_PART_SEC=120 npm run render -- ...   to change the part size
  */
 
 import path from 'path';
@@ -16,12 +17,16 @@ import { bundle } from '@remotion/bundler';
 import { renderMedia, selectComposition } from '@remotion/renderer';
 import { enableTailwind } from '@remotion/tailwind-v4';
 import ffmpeg from 'ffmpeg-static';
-import { currentVideo } from '../src/data/current-video';
-import type { VideoProps } from '../src/types/VideoData';
+import { formatEpisodeRef, parseEpisodeRef } from '../src/series/paths';
+import type { VideoProps } from '../src/types/props';
+import { positionalArgs } from './lib/episode';
 
 const MAX_PART_SEC = Number(process.env.MAX_PART_SEC) || 60;
 const CONCURRENCY = Number(process.env.RENDER_CONCURRENCY) || 2;
+// Optional: use an already installed Chrome/Chromium instead of Remotion's download
+const browserExecutable = process.env.REMOTION_BROWSER_EXECUTABLE || null;
 const OUTPUT_DIR = path.join(process.cwd(), 'out');
+const PARTS_DIR = path.join(OUTPUT_DIR, 'parts');
 
 interface RenderPart {
     index: number;
@@ -58,7 +63,11 @@ const splitIntoParts = (sceneFrames: number[], maxFrames: number): RenderPart[] 
 
 const main = async () => {
     if (!ffmpeg) throw new Error('ffmpeg-static binary not found for this platform');
-    fs.mkdirSync(OUTPUT_DIR, { recursive: true });
+    const arg = positionalArgs()[0];
+    if (!arg) throw new Error('Kullanım: npm run render -- <dizi-id>/<bölüm>, örn. moskova-kedileri/01');
+    const episodeRef = formatEpisodeRef(parseEpisodeRef(arg));
+    const inputProps: VideoProps = { episode: episodeRef };
+    fs.mkdirSync(PARTS_DIR, { recursive: true });
 
     console.log('Bundling project...');
     const serveUrl = await bundle({
@@ -67,12 +76,12 @@ const main = async () => {
         webpackOverride: (config) => enableTailwind(config),
     });
 
-    const composition = await selectComposition({ serveUrl, id: 'Video', inputProps: {} });
-    const { resolvedScenes } = composition.props as VideoProps;
+    const composition = await selectComposition({ serveUrl, id: 'Video', inputProps, browserExecutable });
+    const resolvedScenes = (composition.props as VideoProps).resolvedScenes ?? [];
     const fps = composition.fps;
 
     console.log(
-        `Video: ${resolvedScenes.length} scenes, ${(composition.durationInFrames / fps).toFixed(1)}s, ` +
+        `${episodeRef}: ${resolvedScenes.length} scenes, ${(composition.durationInFrames / fps).toFixed(1)}s, ` +
         `${composition.width}x${composition.height}@${fps}fps`,
     );
 
@@ -83,7 +92,7 @@ const main = async () => {
     }
 
     for (const part of parts) {
-        const outputLocation = path.join(OUTPUT_DIR, part.filename);
+        const outputLocation = path.join(PARTS_DIR, part.filename);
         console.log(`\nRendering part ${part.index}/${parts.length} → ${outputLocation}`);
         let lastPct = -1;
         await renderMedia({
@@ -97,6 +106,7 @@ const main = async () => {
             concurrency: CONCURRENCY,
             overwrite: true,
             chromiumOptions: { gl: 'angle' },
+            browserExecutable,
             onProgress: ({ progress }) => {
                 const pct = Math.floor(progress * 10) * 10;
                 if (pct !== lastPct) {
@@ -108,15 +118,15 @@ const main = async () => {
         console.log(`✔ Part ${part.index} complete.`);
     }
 
-    const finalPath = path.join(OUTPUT_DIR, `${currentVideo.projectId}-final.mp4`);
+    const finalPath = path.join(OUTPUT_DIR, `${episodeRef.replace('/', '-')}.mp4`);
 
     if (parts.length === 1) {
-        fs.copyFileSync(path.join(OUTPUT_DIR, parts[0].filename), finalPath);
+        fs.copyFileSync(path.join(PARTS_DIR, parts[0].filename), finalPath);
     } else {
         console.log(`\nStitching ${parts.length} parts...`);
-        const listFile = path.join(OUTPUT_DIR, 'ffmpeg_list.txt');
+        const listFile = path.join(PARTS_DIR, 'ffmpeg_list.txt');
         fs.writeFileSync(listFile, parts.map((p) => `file '${p.filename}'`).join('\n'));
-        execFileSync(ffmpeg, ['-y', '-f', 'concat', '-safe', '0', '-i', listFile, '-c', 'copy', finalPath], {
+        execFileSync(ffmpeg, ['-y', '-loglevel', 'error', '-f', 'concat', '-safe', '0', '-i', listFile, '-c', 'copy', finalPath], {
             stdio: 'inherit',
         });
     }
@@ -125,6 +135,6 @@ const main = async () => {
 };
 
 main().catch((err) => {
-    console.error('❌ Render failed:', err);
+    console.error('❌ Render failed:', err instanceof Error ? err.message : err);
     process.exit(1);
 });

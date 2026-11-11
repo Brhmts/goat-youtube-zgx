@@ -6,8 +6,11 @@ build
 *.log
 out
 
-# Generated assets (large — regenerate with: npm run generate-assets-v2)
-public/assets/*.jpg
-public/assets/*.mp3
-public/assets/*.mp4
-public/assets/generation-state*.json
+# Generated assets (large — regenerate with: npm run generate-assets -- <series>/<NN>)
+public/series/*/episodes/*/assets/
+public/series/*/refs/_candidates/
+public/series/*/.ref-cache.json
+# Old single-video pipeline (move with: npm run migrate-legacy)
+public/assets/
+
+# Approved reference sheets in public/series/*/refs/ ARE committed — they define the characters.

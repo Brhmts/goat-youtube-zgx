@@ -1,19 +1,12 @@
 import { AbsoluteFill, Img, interpolate, staticFile, useCurrentFrame, useVideoConfig } from 'remotion';
 import React from 'react';
 import { SceneOverlay } from './SceneOverlay';
-
-export type AnimationType =
-    | 'slowZoomIn'
-    | 'slowZoomOut'
-    | 'panRight'
-    | 'panLeft'
-    | 'static'
-    | 'breathing';
+import type { AnimationType } from '../series/schema';
+import type { ResolvedLine } from '../types/props';
 
 interface SceneProps {
     imageSrc: string | null; // null = asset missing, show a placeholder
-    audioSrc?: string | null;
-    subtitle?: string;
+    lines: ResolvedLine[];
     title?: string;
     animation?: AnimationType;
     placeholderLabel?: string;
@@ -22,8 +15,7 @@ interface SceneProps {
 /** Still image with a Ken Burns style camera move. */
 export const Scene: React.FC<SceneProps> = ({
     imageSrc,
-    audioSrc,
-    subtitle,
+    lines,
     title,
     animation = 'static',
     placeholderLabel,
@@ -86,7 +78,7 @@ export const Scene: React.FC<SceneProps> = ({
                 )}
             </AbsoluteFill>
 
-            <SceneOverlay audioSrc={audioSrc} subtitle={subtitle} title={title} />
+            <SceneOverlay lines={lines} title={title} />
         </AbsoluteFill>
     );
 };

@@ -1,0 +1,414 @@
+{
+  "number": 1,
+  "title": "Yapay Zekâ Savaşları",
+  "scenes": [
+    {
+      "id": 1,
+      "description": "Intro: Digital Brain",
+      "imagePrompt": "Cinematic hyper-realistic shot of a glowing blue digital brain connected to fiber optic cables, data flowing like a river, dark background, 8k",
+      "minDuration": 9.7,
+      "lines": [
+        {
+          "speaker": "narrator",
+          "text": "21. yüzyılın başında petrol neyse, bugün \"zeka\" o. Ve bu yeni kaynağı kontrol etmek için tarihin gördüğü en büyük yarış başladı."
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "description": "Intro: Silicon Valley",
+      "imagePrompt": "Aerial view of a futuristic Silicon Valley at night, neon lights, massive corporate towers with logos of tech giants glowing, cyberpunk style",
+      "minDuration": 10.6,
+      "lines": [
+        {
+          "speaker": "narrator",
+          "text": "Silikon Vadisi'nin cam kulelerinde, sessiz ama şiddetli bir savaş yürütülüyor. Toplarla tüfeklerle değil... kodlarla, verilerle ve milyar dolarlık çiplerle."
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "description": "Intro: Eye Reflection",
+      "imagePrompt": "Close up of a human eye reflecting binary code streams, matrix style, intense focus, high detail",
+      "minDuration": 11.4,
+      "lines": [
+        {
+          "speaker": "narrator",
+          "text": "Amaç sadece daha akıllı bir sohbet robotu yapmak değil. Amaç, insan zekasını geride bırakacak o nihai güce ulaşmak: Yapay Genel Zeka, yani AGI."
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "description": "Intro: Golden Trophy",
+      "imagePrompt": "A golden trophy glowing in a dark room, surrounded by shadows of corporate executives reaching for it, conceptual art",
+      "minDuration": 9,
+      "lines": [
+        {
+          "speaker": "narrator",
+          "text": "Kim bu gücü elinde tutarsa, sadece teknolojiyi değil, geleceğin ekonomisini, siyasetini ve belki de insanlığın kaderini kontrol edecek."
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "description": "Intro: Industrial vs AI Revolution",
+      "imagePrompt": "Split screen: Early steam engine vs Quantum computer, demonstrating technological leap, cinematic lighting",
+      "minDuration": 10,
+      "lines": [
+        {
+          "speaker": "narrator",
+          "text": "Sanayi devrimi kas gücümüzü makinelerle değiştirdi. Yapay zeka devrimi ise zihin gücümüzü devrediyor. Ve bu devrimin kazananı hepsini alacak."
+        }
+      ]
+    },
+    {
+      "id": 6,
+      "description": "Intro: Title Card",
+      "imagePrompt": "Title card: \"AI WARS: THE BATTLE FOR INTELLIGENCE\" in bold metallic 3D letters, sparks flying, dark background",
+      "minDuration": 4.7,
+      "lines": [
+        {
+          "speaker": "narrator",
+          "text": "Hoş geldiniz. Burası cephe hattı. Burası, Büyük Yapay Zeka Savaşları."
+        }
+      ]
+    },
+    {
+      "id": 7,
+      "description": "OpenAI: Sam Altman",
+      "imagePrompt": "Photo of Sam Altman walking on a stage, spotlight on him, crowd in shadow, realistic style, high contrast",
+      "minDuration": 10,
+      "lines": [
+        {
+          "speaker": "narrator",
+          "text": "Her şey, kar amacı gütmeyen küçük bir laboratuvar olarak başladı. OpenAI, yapay zekanın insanlık yararına geliştirilmesi için kurulmuştu."
+        }
+      ]
+    },
+    {
+      "id": 8,
+      "description": "OpenAI: Transformer Architecture",
+      "imagePrompt": "A simplified diagram of the Transformer architecture, glowing nodes, machine learning concept, blue and white aesthetics",
+      "minDuration": 10.9,
+      "lines": [
+        {
+          "speaker": "narrator",
+          "text": "Ancak 2022'nin sonlarında, Pandora'nın kutusunu açtılar. ChatGPT'nin yayınlanması, teknoloji dünyasına atılmış bir atom bombası etkisi yarattı."
+        }
+      ]
+    },
+    {
+      "id": 9,
+      "description": "OpenAI: Global Connectivity",
+      "imagePrompt": "Millions of people using smartphones and laptops, glowing screens illuminating their faces, global connectivity map",
+      "minDuration": 10.9,
+      "lines": [
+        {
+          "speaker": "narrator",
+          "text": "Sadece 5 günde 1 milyon kullanıcı. İki ayda 100 milyon. Tarihin en hızlı büyüyen uygulaması oldu. Google'ın yıllardır kurduğu arama imparatorluğu bir anda sarsıldı."
+        }
+      ]
+    },
+    {
+      "id": 10,
+      "description": "Microsoft: Nadella & Altman",
+      "imagePrompt": "Satya Nadella (Microsoft CEO) shaking hands with Sam Altman, futuristic boardroom background, blurred, realistic",
+      "minDuration": 9.8,
+      "lines": [
+        {
+          "speaker": "narrator",
+          "text": "Bu yükselişi gören biri vardı: Microsoft. Satya Nadella, milyarlarca dolarlık bir kumar oynadı ve OpenAI'ın en büyük destekçisi oldu."
+        }
+      ]
+    },
+    {
+      "id": 11,
+      "description": "Microsoft: Bing AI",
+      "imagePrompt": "Microsoft Bing logo transformation into an AI powered intelligent assistant, particles merging, shiny styling",
+      "minDuration": 9.2,
+      "lines": [
+        {
+          "speaker": "narrator",
+          "text": "Bing'e entegre edilen yapay zeka ile Microsoft, yıllar sonra ilk kez Google'a \"Dans edelim mi?\" dedi. Arama motoru savaşları yeniden başlamıştı."
+        }
+      ]
+    },
+    {
+      "id": 12,
+      "description": "Microsoft: Azure Servers",
+      "imagePrompt": "A massive server farm with Microsoft branding, green lights, infinite rows of racks, cinematic perspective",
+      "minDuration": 10.6,
+      "lines": [
+        {
+          "speaker": "narrator",
+          "text": "Microsoft'un bulut altyapısı Azure, OpenAI'ın modellerini besleyen devasa bir motora dönüştü. Bu ortaklık, diğer tüm oyuncuları paniğe sürükledi."
+        }
+      ]
+    },
+    {
+      "id": 13,
+      "description": "OpenAI: GPT-4 Code",
+      "imagePrompt": "Close up of GPT-4 text appearing on screen, answering complex questions, code generation visuals",
+      "minDuration": 10.8,
+      "lines": [
+        {
+          "speaker": "narrator",
+          "text": "GPT-4'ün çıkışı ise çıtayı arşa çıkardı. Sadece metin değil, görüntüleri de anlayan bu model, rakiplerine \"Biz çok ilerideyiz, yetişin\" mesajını veriyordu."
+        }
+      ]
+    },
+    {
+      "id": 14,
+      "description": "Google: Code Red",
+      "imagePrompt": "Google headquarters ('Googleplex') under a red emergency light alarm, \"CODE RED\" warning signs digital overlay",
+      "minDuration": 10.8,
+      "lines": [
+        {
+          "speaker": "narrator",
+          "text": "Silikon Vadisi'nin diğer ucunda, Mountain View'da alarmlar çalıyordu. Google yönetimi \"Kırmızı Kod\" ilan etti. Yılların lideri, kendi oyununda geride mi kalmıştı?"
+        }
+      ]
+    },
+    {
+      "id": 15,
+      "description": "Google: Demis Hassabis",
+      "imagePrompt": "Demis Hassabis (DeepMind CEO) thinking deeply, surrounded by chess pieces and Go board game, intellectual atmosphere",
+      "minDuration": 7.2,
+      "lines": [
+        {
+          "speaker": "narrator",
+          "text": "Aslında yapay zeka araştırmalarının çoğu Google'dan çıkmıştı. Ve ellerinde gizli bir silahları vardı: DeepMind."
+        }
+      ]
+    },
+    {
+      "id": 16,
+      "description": "Google: AlphaGo",
+      "imagePrompt": "AlphaGo playing against Lee Sedol, historic moment representation, holographic Go board",
+      "minDuration": 10.8,
+      "lines": [
+        {
+          "speaker": "narrator",
+          "text": "AlphaGo ile dünya şampiyonunu yenen ekip, bu sefer Gemini projesi için Google Brain ekibiyle birleşti. İki ezeli rakip birim, ortak düşmana karşı birleşmek zorundaydı."
+        }
+      ]
+    },
+    {
+      "id": 17,
+      "description": "Google: Gemini Model",
+      "imagePrompt": "Visualization of Gemini AI model, multimodal capabilities icon (text, image, audio, video) merging into one core",
+      "minDuration": 10.2,
+      "lines": [
+        {
+          "speaker": "narrator",
+          "text": "Gemini'nin vaadi büyüktü: Doğuştan multimodal. Yani sadece metni değil; sesi, görüntüyü ve videoyu aynı anda anlayıp işleyebilen bir zeka."
+        }
+      ]
+    },
+    {
+      "id": 18,
+      "description": "Google: Fail Montage",
+      "imagePrompt": "A chaotic montage of Google's early AI fails (Bard launch error), stock market graph plummeting red line",
+      "minDuration": 10.2,
+      "lines": [
+        {
+          "speaker": "narrator",
+          "text": "Ancak Google'ın acelesi pahalıya patladı. Bard'ın lansmanındaki basit bir hata, şirketin değerinden milyarlarca dolar sildi. \"Uyanan Dev\" sersemlemiş görünüyordu."
+        }
+      ]
+    },
+    {
+      "id": 19,
+      "description": "Google: Robot Ecosystem",
+      "imagePrompt": "A futuristic sleek robot hand holding a Google logo sphere, stabilizing itself, repairing cracks",
+      "minDuration": 12.1,
+      "lines": [
+        {
+          "speaker": "narrator",
+          "text": "Yine de Google asla hafife alınamaz. Dünyanın verisi onların elinde. YouTube, Arama, Android... Gemini, bu devasa ekosisteme entegre olduğunda oyunun kuralları değişebilir."
+        }
+      ]
+    },
+    {
+      "id": 20,
+      "description": "Anthropic: Leaving OpenAI",
+      "imagePrompt": "Shadows of people leaving a glass building, looking back with concern, silhouette style, dramatic lighting",
+      "minDuration": 10.2,
+      "lines": [
+        {
+          "speaker": "narrator",
+          "text": "Bu yarışın hızı herkesi memnun etmedi. OpenAI'ın \"fazla ticarileştiğini\" ve güvenliği ihmal ettiğini düşünen bir grup mühendis, ana gemiyi terk etti."
+        }
+      ]
+    },
+    {
+      "id": 21,
+      "description": "Anthropic: Logo",
+      "imagePrompt": "Logo of Anthropic company, clean, minimalist, scientific laboratory background",
+      "minDuration": 5.6,
+      "lines": [
+        {
+          "speaker": "narrator",
+          "text": "Ve Anthropic'i kurdular. Onların felsefesi farklıydı: \"Önce güvenlik, sonra yetenek.\""
+        }
+      ]
+    },
+    {
+      "id": 22,
+      "description": "Anthropic: Constitution",
+      "imagePrompt": "A robot reading a thick book titled \"Constitution\", calm library setting, warm lighting",
+      "minDuration": 12.7,
+      "lines": [
+        {
+          "speaker": "narrator",
+          "text": "Geliştirdikleri \"Claude\" modeli, rakiplerinden farklı olarak bir \"Anayasa\" ile eğitildi. Neyi yapıp neyi yapmaması gerektiğini öğrenen, daha itaatkar ve zararsız bir yapay zeka."
+        }
+      ]
+    },
+    {
+      "id": 23,
+      "description": "Anthropic: Claude vs GPT-4",
+      "imagePrompt": "Claude 3 Opus beating GPT-4 on a benchmark chart, rising bars, glowing celebratory interface",
+      "minDuration": 11.4,
+      "lines": [
+        {
+          "speaker": "narrator",
+          "text": "Ama \"güvenli\" demek \"zayıf\" demek değildi. Claude 3, çıktığında GPT-4'ü birçok testte geçerek herkesi şaşırttı. Etik duruş, teknik üstünlükle birleşmişti."
+        }
+      ]
+    },
+    {
+      "id": 24,
+      "description": "Anthropic: Amazon Investment",
+      "imagePrompt": "Amazon logo on a package transforming into a digital server block, investment concept money flowing",
+      "minDuration": 7.4,
+      "lines": [
+        {
+          "speaker": "narrator",
+          "text": "Bu duruş, Amazon'un dikkatini çekti. Milyarlarca dolarlık yatırımla Anthropic, yarışın üçüncü büyük atı haline geldi."
+        }
+      ]
+    },
+    {
+      "id": 25,
+      "description": "Meta: Zuckerberg",
+      "imagePrompt": "Mark Zuckerberg wearing a hoodie, looking visionary, metaverse digital background fading into AI code",
+      "minDuration": 8.5,
+      "lines": [
+        {
+          "speaker": "narrator",
+          "text": "Peki ya Mark Zuckerberg? Metaverse hayalleriyle milyarlar kaybeden Meta, yapay zeka savaşlarına çok farklı bir stratejiyle girdi."
+        }
+      ]
+    },
+    {
+      "id": 26,
+      "description": "Meta: Open Source Chest",
+      "imagePrompt": "A locked treasure chest marked \"Proprietary\" vs an open treasure chest marked \"Open Source\" glowing gold",
+      "minDuration": 7.6,
+      "lines": [
+        {
+          "speaker": "narrator",
+          "text": "Diğerleri modellerini kilitli kapılar ardında, \"ticari sır\" olarak saklarken; Zuckerberg kapıları sonuna kadar açtı."
+        }
+      ]
+    },
+    {
+      "id": 27,
+      "description": "Meta: Llama Logo",
+      "imagePrompt": "Llama logo (a stylized llama) running free in a digital field, followed by thousands of smaller developer avatars",
+      "minDuration": 10.5,
+      "lines": [
+        {
+          "speaker": "narrator",
+          "text": "Llama modelleri \"Açık Kaynak\" olarak yayınlandı. Bu, teknolojiyi sadece dev şirketlerin değil, herkesin, evindeki bilgisayarda bile kullanabilmesi demekti."
+        }
+      ]
+    },
+    {
+      "id": 28,
+      "description": "Meta: Developer Map",
+      "imagePrompt": "A global map showing thousands of light points connecting, representing open source developers collaborating",
+      "minDuration": 10.2,
+      "lines": [
+        {
+          "speaker": "narrator",
+          "text": "Google ve OpenAI birbiriyle yarışırken, Meta binlerce bağımsız geliştiriciyi arkasına aldı. \"Eğer standart biz olursak, savaşı biz kazanırız\" diyorlardı."
+        }
+      ]
+    },
+    {
+      "id": 29,
+      "description": "Meta: Cyberpunk Market",
+      "imagePrompt": "A chaotic cyberpunk street market selling AI mods, diverse robots, colorful and gritty",
+      "minDuration": 10.3,
+      "lines": [
+        {
+          "speaker": "narrator",
+          "text": "Bu hamle tehlikeli mi? Belki. Kontrolsüz yapay zeka kötü niyetli kişilerin eline geçebilir. Ama Meta'ya göre, şeffaflık en iyi güvenliktir."
+        }
+      ]
+    },
+    {
+      "id": 30,
+      "description": "Conclusion: Symbiosis",
+      "imagePrompt": "A silhouetted human figure shaking hands with a glowing energy being, symbolizing human-AI symbiosis, starlight background",
+      "minDuration": 12.3,
+      "lines": [
+        {
+          "speaker": "narrator",
+          "text": "Bu savaşın bir bitiş çizgisi yok. Modeller her gün daha akıllı, daha hızlı ve daha insani hale geliyor. AGI'ye giden yol artık bir hayal değil, bir mühendislik problemi."
+        }
+      ]
+    },
+    {
+      "id": 31,
+      "description": "Conclusion: Breakthroughs",
+      "imagePrompt": "A montage of medical breakthroughs, space exploration, and solving climate change using AI visuals",
+      "minDuration": 9.5,
+      "lines": [
+        {
+          "speaker": "narrator",
+          "text": "Kazanan şirket trilyon dolarların sahibi olacak. Ama asıl soru şu: Bu güç, insanlığın kanseri yenmesini, yıldızlara ulaşmasını mı sağlayacak..."
+        }
+      ]
+    },
+    {
+      "id": 32,
+      "description": "Conclusion: Stop Button",
+      "imagePrompt": "Close up of a red \"STOP\" button on a control panel, covered in dust, ominous lighting",
+      "minDuration": 3.9,
+      "lines": [
+        {
+          "speaker": "narrator",
+          "text": "Yoksa kontrol edemediğimiz bir zekanın gölgesinde mi kalacağız?"
+        }
+      ]
+    },
+    {
+      "id": 33,
+      "description": "Conclusion: Future Earth",
+      "imagePrompt": "Earth seen from space, enveloped in a digital neural network, glowing beautifully, hopeful yet mysterious",
+      "minDuration": 8.5,
+      "lines": [
+        {
+          "speaker": "narrator",
+          "text": "Silikon Vadisi'nde klavyeler tıkırdamaya devam ediyor. Gelecek yazılıyor. Ve bizler, tarihin en büyük dönüşümüne şahitlik ediyoruz."
+        }
+      ]
+    },
+    {
+      "id": 34,
+      "description": "Credits",
+      "imagePrompt": "Black screen with \"Directed by [Your Name] / AI Assistant\" text, fading out",
+      "minDuration": 5,
+      "lines": [
+        {
+          "speaker": "narrator",
+          "text": " . "
+        }
+      ]
+    }
+  ]
+}

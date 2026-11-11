@@ -1,10 +1,10 @@
 import { AbsoluteFill, Series } from "remotion";
 import { Scene } from "./components/Scene";
 import { VideoScene } from "./components/VideoScene";
-import type { VideoProps } from "./types/VideoData";
+import type { VideoProps } from "./types/props";
 
-// Scenes are resolved in calculate-metadata.ts (asset checks + durations).
-export const VideoComposition: React.FC<VideoProps> = ({ resolvedScenes }) => {
+// Scenes are resolved in calculate-metadata.ts (episode JSON + asset checks + dialogue timing).
+export const VideoComposition: React.FC<VideoProps> = ({ resolvedScenes = [] }) => {
     return (
         <AbsoluteFill style={{ backgroundColor: "black" }}>
             <Series>
@@ -14,15 +14,13 @@ export const VideoComposition: React.FC<VideoProps> = ({ resolvedScenes }) => {
                             <VideoScene
                                 videoSrc={scene.videoSrc}
                                 videoDurationSec={scene.videoDurationSec}
-                                audioSrc={scene.audioSrc}
-                                subtitle={scene.subtitle}
+                                lines={scene.lines}
                                 title={scene.title}
                             />
                         ) : (
                             <Scene
                                 imageSrc={scene.imageSrc}
-                                audioSrc={scene.audioSrc}
-                                subtitle={scene.subtitle}
+                                lines={scene.lines}
                                 title={scene.title}
                                 animation={scene.animation}
                                 placeholderLabel={`Sahne ${scene.id}: görsel eksik`}

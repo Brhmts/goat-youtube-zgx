@@ -1,8 +1,17 @@
 import { ALL_FORMATS, Input, UrlSource } from 'mediabunny';
 import { staticFile, type CalculateMetadataFunction } from 'remotion';
-import { currentVideo } from './data/current-video';
-import { sceneAssetPaths, sceneDurationInFrames } from './lib/assets';
-import type { ResolvedScene, VideoProps } from './types/VideoData';
+import {
+    AUDIO_TAIL_SEC,
+    DEFAULT_EPISODE,
+    DEFAULT_LINE_PAUSE_SEC,
+    ESTIMATED_CHARS_PER_SEC,
+    FPS,
+    LINE_LEAD_IN_SEC,
+} from './config';
+import { resolveSpeaker } from './series/codex';
+import { parseSeriesAndEpisode } from './series/load';
+import { formatEpisodeRef, lineVoicePath, parseEpisodeRef, sceneImagePath, sceneVideoPath } from './series/paths';
+import type { ResolvedLine, ResolvedScene, VideoProps } from './types/props';
 
 /** Duration of a media file in seconds, or null if it is missing or unreadable. */
 const probeDuration = async (src: string): Promise<number | null> => {
@@ -34,58 +43,81 @@ const imageExists = async (src: string, signal: AbortSignal): Promise<boolean> =
     }
 };
 
+const sec = (s: number) => Math.round(s * FPS);
+
 /**
- * Looks at which generated assets actually exist and how long the narration is,
- * so that:
- *  - every scene is at least as long as its voice-over (no cut-off sentences),
- *  - a scene whose video clip failed falls back to the still image (Ken Burns),
- *  - a scene with no image at all renders a placeholder instead of crashing.
+ * Loads the episode, checks which generated assets exist and times the dialogue:
+ *  - lines play one after another, each with its own recording,
+ *  - a scene is as long as its dialogue (at least minDuration),
+ *  - lines without a recording yet are timed from their length (preview without TTS),
+ *  - a failed video clip falls back to the still image, a missing image to a placeholder.
  */
-export const calculateVideoMetadata: CalculateMetadataFunction<VideoProps> = async ({ abortSignal }) => {
-    const { projectId, scenes, useVideoClips, hasVoice } = currentVideo;
+export const calculateVideoMetadata: CalculateMetadataFunction<VideoProps> = async ({ props, abortSignal }) => {
+    const ref = parseEpisodeRef(props.episode || DEFAULT_EPISODE);
+    const { series, episode } = await parseSeriesAndEpisode(ref, async (publicPath) => {
+        const res = await fetch(staticFile(publicPath), { signal: abortSignal });
+        if (!res.ok) throw new Error(`${publicPath} bulunamadı (HTTP ${res.status}).`);
+        return res.text();
+    });
 
     const resolvedScenes: ResolvedScene[] = await Promise.all(
-        scenes.map(async (scene) => {
-            const paths = sceneAssetPaths(projectId, scene.id);
-            const image = staticFile(paths.image);
-            const video = staticFile(paths.video);
-            const voice = staticFile(paths.voice);
+        episode.scenes.map(async (scene) => {
+            const imagePath = sceneImagePath(ref, scene.id);
+            const videoPath = sceneVideoPath(ref, scene.id);
+            const wantsVideo = Boolean(series.generation.videoClips && scene.videoPrompt && scene.useVideo !== false);
 
-            const wantsVideo = Boolean(useVideoClips && scene.videoPrompt && scene.useVideo !== false);
-
-            const [hasImage, videoDurationSec, audioDurationSec] = await Promise.all([
-                imageExists(image, abortSignal),
-                wantsVideo ? probeDuration(video) : Promise.resolve(null),
-                hasVoice ? probeDuration(voice) : Promise.resolve(null),
+            const [hasImage, videoDurationSec, lineDurations] = await Promise.all([
+                imageExists(staticFile(imagePath), abortSignal),
+                wantsVideo ? probeDuration(staticFile(videoPath)) : Promise.resolve(null),
+                Promise.all(
+                    scene.lines.map((line, i) => {
+                        const voice = resolveSpeaker(series, line.speaker)?.voice;
+                        const audioPath = lineVoicePath(ref, scene.id, i, line.text, voice);
+                        return probeDuration(staticFile(audioPath)).then((d) => ({ audioPath, d }));
+                    }),
+                ),
             ]);
 
-            if (wantsVideo && videoDurationSec === null) {
-                console.warn(`[Video] Sahne ${scene.id}: video klibi yok, görsel kullanılıyor.`);
-            }
-            if (hasVoice && audioDurationSec === null) {
-                console.warn(`[Video] Sahne ${scene.id}: seslendirme dosyası yok.`);
-            }
-            if (!hasImage && videoDurationSec === null) {
-                console.warn(`[Video] Sahne ${scene.id}: görsel de yok, yer tutucu gösterilecek.`);
-            }
+            let cursor = sec(LINE_LEAD_IN_SEC);
+            const lines: ResolvedLine[] = scene.lines.map((line, i) => {
+                const speaker = resolveSpeaker(series, line.speaker);
+                const { audioPath, d } = lineDurations[i];
+                const spoken = d ?? Math.max(1.2, line.text.length / ESTIMATED_CHARS_PER_SEC);
+                const resolved: ResolvedLine = {
+                    speakerName: speaker && !speaker.isNarrator ? speaker.name : null,
+                    color: speaker?.color ?? null,
+                    text: line.subtitle ?? line.text,
+                    audioSrc: d === null ? null : audioPath,
+                    from: cursor,
+                    durationInFrames: Math.max(1, sec(spoken)),
+                };
+                cursor += resolved.durationInFrames + (i < scene.lines.length - 1 ? sec(line.pauseAfter ?? DEFAULT_LINE_PAUSE_SEC) : 0);
+                return resolved;
+            });
+
+            const missingVoices = lines.filter((l) => !l.audioSrc).length;
+            if (missingVoices > 0) console.warn(`[Video] Sahne ${scene.id}: ${missingVoices} satırın sesi yok (süre tahmini).`);
+            if (wantsVideo && videoDurationSec === null) console.warn(`[Video] Sahne ${scene.id}: video klibi yok, görsel kullanılıyor.`);
+            if (!hasImage && videoDurationSec === null) console.warn(`[Video] Sahne ${scene.id}: görsel yok, yer tutucu gösterilecek.`);
+
+            const dialogueEnd = lines.length > 0 ? cursor + sec(AUDIO_TAIL_SEC) : 0;
 
             return {
                 id: scene.id,
-                durationInFrames: sceneDurationInFrames(scene, audioDurationSec),
-                subtitle: scene.subtitle || scene.voiceText,
+                durationInFrames: Math.max(sec(scene.minDuration), dialogueEnd),
                 title: scene.title,
-                animation: scene.animation || 'slowZoomIn',
-                imageSrc: hasImage ? paths.image : null,
-                videoSrc: videoDurationSec !== null ? paths.video : null,
+                animation: scene.animation ?? 'slowZoomIn',
+                imageSrc: hasImage ? imagePath : null,
+                videoSrc: videoDurationSec !== null ? videoPath : null,
                 videoDurationSec,
-                audioSrc: audioDurationSec !== null ? paths.voice : null,
+                lines,
             };
         }),
     );
 
     return {
-        durationInFrames: resolvedScenes.reduce((sum, s) => sum + s.durationInFrames, 0),
-        props: { resolvedScenes },
-        defaultOutName: `${projectId}.mp4`,
+        durationInFrames: Math.max(1, resolvedScenes.reduce((sum, s) => sum + s.durationInFrames, 0)),
+        props: { ...props, resolvedScenes },
+        defaultOutName: `${formatEpisodeRef(ref).replace('/', '-')}.mp4`,
     };
 };

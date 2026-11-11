@@ -2,12 +2,12 @@ import { AbsoluteFill, Loop, OffthreadVideo, staticFile, useVideoConfig } from '
 import React from 'react';
 import { MIN_VIDEO_PLAYBACK_RATE, VIDEO_TAIL_TRIM_SEC } from '../config';
 import { SceneOverlay } from './SceneOverlay';
+import type { ResolvedLine } from '../types/props';
 
 interface VideoSceneProps {
     videoSrc: string;       // Path to video clip (from image-to-video)
     videoDurationSec: number; // Measured length of the clip
-    audioSrc?: string | null; // Path to voice narration (optional)
-    subtitle?: string;
+    lines: ResolvedLine[];
     title?: string;
 }
 
@@ -20,8 +20,7 @@ interface VideoSceneProps {
 export const VideoScene: React.FC<VideoSceneProps> = ({
     videoSrc,
     videoDurationSec,
-    audioSrc,
-    subtitle,
+    lines,
     title,
 }) => {
     const { fps, durationInFrames } = useVideoConfig();
@@ -47,7 +46,7 @@ export const VideoScene: React.FC<VideoSceneProps> = ({
                 {passFrames < durationInFrames ? <Loop durationInFrames={passFrames}>{video}</Loop> : video}
             </AbsoluteFill>
 
-            <SceneOverlay audioSrc={audioSrc} subtitle={subtitle} title={title} />
+            <SceneOverlay lines={lines} title={title} />
         </AbsoluteFill>
     );
 };
