@@ -33,7 +33,8 @@
     "upgrade": "remotion upgrade",
     "lint": "eslint src && tsc",
     "generate-assets": "tsx scripts/generate-assets.ts",
-    "render": "tsx scripts/render-video.ts"
+    "render": "tsx scripts/render-video.ts",
+    "codex": "tsx scripts/codex-report.ts"
   },
   "sideEffects": [
     "*.css"

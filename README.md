@@ -15,12 +15,14 @@ cp .env.example .env   # KIE_AI_API_KEY değerini doldurun
 
 1. **Projeyi seçin:** `src/data/current-video.ts` tek doğruluk kaynağıdır. Sahneler
    `src/data/*.ts` dosyalarında tanımlanır (örnek: `osmanli-data.ts`).
-2. **Asset üretin:** `npm run generate-assets`
+2. **Codex'i kontrol edin:** `npm run codex` (ücretsiz). Hangi sahnede hangi karakterin olduğunu
+   gösterir; `npm run codex -- --prompts` görsel modele gidecek prompt'ları da yazdırır.
+3. **Asset üretin:** `npm run generate-assets`
    - Dosyalar `public/assets/<projectId>-scene-<id>-{image.jpg,video.mp4,voice.mp3}` olarak kaydedilir.
    - Tekrar çalıştırmak güvenlidir: hazır dosyalar atlanır, yarım kalan Kie.ai görevleri devam ettirilir,
      başarısız adımlar yeniden denenir. Eksik kalan bir şey varsa script 1 koduyla çıkar.
-3. **Önizleyin:** `npm run dev` (Remotion Studio)
-4. **Render alın:** `npm run render` → `out/<projectId>-final.mp4`
+4. **Önizleyin:** `npm run dev` (Remotion Studio)
+5. **Render alın:** `npm run render` → `out/<projectId>-final.mp4`
    - Video en fazla 60 sn'lik parçalar halinde (sahne sınırlarından) render edilip birleştirilir.
      `MAX_PART_SEC=120 npm run render` ile parça süresi değiştirilebilir.
 
@@ -35,6 +37,23 @@ cp .env.example .env   # KIE_AI_API_KEY değerini doldurun
 - **Ayarlar:** FPS, çözünürlük (1920×1080) ve zamanlama sabitleri `src/config.ts` içindedir.
 - **Maliyet modu** (`costMode`): `budget` = 1K görsel + Hailuo standard 768P,
   `standard` = 2K + standard 768P, `premium` = 2K + Hailuo Pro 1080P.
+
+## Codex (karakter ve mekân tutarlılığı)
+
+NovelCrafter'daki Codex fikriyle aynı: her karakter ve mekân için **tek bir sabit tarif**
+(`src/data/osmanli-codex.ts`). Bir sahnenin `imagePrompt`'unda codex'teki bir ad geçtiğinde
+(veya sahneye `codex: ['id']` yazıldığında) o tarif prompt'a otomatik eklenir. Böylece
+II. Mehmed 9. ve 11. sahnede aynı kişi olarak çizilir.
+
+- `aliases`: hem İngilizce prompt hem Türkçe anlatımdaki adlar. Türkçe harfler normalize edilir
+  (Ertuğrul = Ertugrul), ek gelen biçimler (Mehmed'in) eşleşir, "Osman" ise "Osmanlı" ile eşleşmez.
+- `progressions`: bir karakterin görünümü serinin ilerleyen sahnelerinde değişiyorsa (yaşlanma vb.).
+- `notes`: tarih ve ilişki gibi gerçekler. Görsel modele gönderilmez; senaryo kontrolü içindir.
+- `npm run codex`, `out/<projectId>-codex.md` dosyasını da üretir. Bunu NovelCrafter'a
+  (snippet olarak yapıştırıp codex'e aktararak) ya da Claude'a senaryoyu kontrol ettirmek için verebilirsiniz.
+- `generate-assets`, codex hatası (çakışan ad, olmayan id) varsa para harcamadan durur.
+- Not: Codex sadece **yeni** üretilen görselleri etkiler. Mevcut görselleri yeniden üretmek için
+  `public/assets` içinden silin.
 
 ## Notlar
 

@@ -25,6 +25,7 @@ import { generateVoice } from '../src/services/elevenlabs';
 import { isNonEmptyFile, isUrlReachable, sleep } from '../src/services/http';
 import { currentVideo } from '../src/data/current-video';
 import { sceneAssetPaths } from '../src/lib/assets';
+import { buildImagePrompt, checkCodex } from '../src/lib/codex';
 import type { SceneData } from '../src/types/VideoData';
 
 const PUBLIC_DIR = path.join(process.cwd(), 'public');
@@ -73,19 +74,12 @@ const wantsVideo = (scene: SceneData) =>
     Boolean(currentVideo.useVideoClips && scene.videoPrompt && scene.useVideo !== false);
 
 // ── Settings ─────────────────────────────────────────────────────
-const { projectId, scenes, useVideoClips, costMode = 'budget', style, hasVoice } = currentVideo;
+const { projectId, scenes, useVideoClips, costMode = 'budget', style, hasVoice, codex = [] } = currentVideo;
 
 // Cost mode determines resolution & model
 const IMAGE_RESOLUTION: '1K' | '2K' = costMode === 'budget' ? '1K' : '2K';
 const VIDEO_MODEL = costMode === 'premium' ? MODELS.VIDEO : MODELS.VIDEO_STANDARD;
 const VIDEO_RESOLUTION: '768P' | '1080P' = costMode === 'premium' ? '1080P' : '768P';
-
-const buildImagePrompt = (scene: SceneData) => {
-    let prompt = scene.imagePrompt;
-    if (style?.suffix) prompt += `, ${style.suffix}`;
-    if (style?.negativeHint) prompt += `. Avoid: ${style.negativeHint}`;
-    return prompt;
-};
 
 const videoDurationFor = (scene: SceneData): '6' | '10' => {
     const requested = scene.videoDuration ?? '6';
@@ -122,7 +116,7 @@ const generateSceneImage = async (scene: SceneData) => {
     if (!state[key].imageTaskId) {
         console.log(`[IMAGE] Scene ${scene.id}: creating task...`);
         const taskId = await createImageTask({
-            prompt: buildImagePrompt(scene),
+            prompt: buildImagePrompt(scene, codex, style),
             aspectRatio: '16:9',
             resolution: IMAGE_RESOLUTION,
         });
@@ -212,6 +206,13 @@ const main = async () => {
         process.exit(1);
     }
 
+    const codexErrors = checkCodex(scenes, codex).filter((i) => i.level === 'error');
+    if (codexErrors.length > 0) {
+        codexErrors.forEach((i) => console.error(`[CODEX] ${i.message}`));
+        console.error('Codex hatalarını düzeltin (npm run codex) ve tekrar deneyin.');
+        process.exit(1);
+    }
+
     console.log(`\n╔══════════════════════════════════════════════╗`);
     console.log(`║  Asset Generation — ${projectId}`);
     console.log(`║  Scenes: ${scenes.length} | Video Clips: ${useVideoClips ? 'YES' : 'NO'} | Voice: ${hasVoice ? 'YES' : 'NO'}`);
@@ -219,6 +220,7 @@ const main = async () => {
     console.log(`║  Image: ${MODELS.IMAGE} @ ${IMAGE_RESOLUTION}`);
     if (useVideoClips) console.log(`║  Video: ${VIDEO_MODEL} @ ${VIDEO_RESOLUTION}`);
     if (style) console.log(`║  Style: ${style.suffix.substring(0, 40)}...`);
+    if (codex.length) console.log(`║  Codex: ${codex.length} entries`);
     console.log(`╚══════════════════════════════════════════════╝\n`);
 
     for (let i = 0; i < scenes.length; i += BATCH_SIZE) {
