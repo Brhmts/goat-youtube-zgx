@@ -42,6 +42,7 @@ export const osmanliScenes: SceneData[] = [
         id: 3,
         duration: 5,
         description: "Ertuğrul Gazi",
+        codex: ['ertugrul'], // prompt names no one, but this is Ertuğrul
         imagePrompt: "Portrait of a noble Turkish tribal leader on horseback, weathered face with wise eyes, wearing simple but dignified armor, holding a sword, Anatolian highlands behind him, dramatic rim lighting",
         videoPrompt: "Very subtle camera drift forward, horse breathing and shifting weight, leader's cloak moving slightly in wind, atmospheric haze in background slowly shifting",
         voiceText: "Ertuğrul Gazi, Kayı boyunun başındaki bir savaşçıydı. Bizans sınırında küçük bir uç beyliği kurdu. Kimse bilmiyordu ki bu mütevazı başlangıç, tarihin en büyük imparatorluklarından birine dönüşecek.",

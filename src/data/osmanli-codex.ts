@@ -1,0 +1,89 @@
+import type { CodexEntry } from '../types/VideoData';
+
+/**
+ * Osmanlı serisinin "story bible"ı (NovelCrafter Codex mantığı).
+ *
+ * - visual: görsel prompt'una eklenir → aynı kişi her sahnede aynı görünür.
+ * - aliases: İngilizce prompt ve Türkçe anlatımdaki adlar. Türkçe harfler
+ *   normalize edilir (Ertuğrul = Ertugrul), ek gelen biçimler (Mehmed'in) otomatik eşleşir.
+ * - notes: senaryo tutarlılığı için gerçekler. Görsel modele gönderilmez.
+ *
+ * Seri boyunca bu dosyayı büyütün; yeni videolar aynı codex'i kullanabilir.
+ */
+export const OSMANLI_CODEX: CodexEntry[] = [
+    // ═══ KARAKTERLER ═══
+    {
+        id: 'ertugrul',
+        type: 'character',
+        name: 'Ertuğrul Gazi',
+        aliases: ['Ertuğrul', 'Ertugrul Ghazi'],
+        visual: 'man in his 50s, weathered tanned face, deep-set dark eyes, long grey-streaked black beard, white felt cap with fur trim, simple dark leather lamellar armor over a brown kaftan, curved sabre',
+        notes: 'Kayı boyu beyi, Osman Gazi\'nin babası. Söğüt çevresinde uç beyliği. Ölümü yaklaşık 1280.',
+    },
+    {
+        id: 'osman-1',
+        type: 'character',
+        name: 'Osman Gazi',
+        aliases: ['Osman', 'Osman I', 'Osman Bey', 'Birinci Osman'],
+        visual: 'man in his late 20s, strong jaw, short black beard, intense brown eyes, tall white Turkmen cap with a red band, crimson kaftan under chainmail, fur-lined cloak, curved sabre at the hip',
+        notes: 'Osmanlı Devleti\'nin kurucusu, Ertuğrul Gazi\'nin oğlu. Bey: yaklaşık 1299–1324. Çınar ağacı rüyası.',
+    },
+    {
+        id: 'orhan',
+        type: 'character',
+        name: 'Orhan Gazi',
+        aliases: ['Orhan', 'Orhan Bey'],
+        visual: 'man in his 40s, broad shoulders, full dark beard, calm eyes, white turban with a green band, dark green kaftan with gold trim',
+        notes: 'Osman Gazi\'nin oğlu. 1326\'da Bursa\'yı aldı ve başkent yaptı. Oğlu Süleyman Paşa 1350\'lerde Rumeli\'ye geçti.',
+    },
+    {
+        id: 'murad-1',
+        type: 'character',
+        name: 'Sultan Murad I',
+        aliases: ['Murad I', 'Birinci Murad', 'Sultan Birinci Murad', 'Hüdavendigar'],
+        visual: 'man in his 60s, white beard, stern face, large white turban, red kaftan with gold embroidery under plate-and-mail armor, on a grey warhorse',
+        notes: 'Saltanat 1362–1389. 15 Haziran 1389 Kosova Savaşı\'nı kazandı, savaş meydanında şehit edildi.',
+    },
+    {
+        id: 'bayezid-1',
+        type: 'character',
+        name: 'Sultan Bayezid I',
+        aliases: ['Bayezid I', 'Bayezid', 'Yıldırım Bayezid'],
+        visual: 'man in his 40s, sharp fierce eyes, thick black beard, tall white turban with a gold aigrette, dark blue kaftan with gold embroidery',
+        notes: 'Saltanat 1389–1402. "Yıldırım" lakabı hızından. 1402 Ankara Savaşı\'nda Timur\'a yenildi, esir düştü.',
+    },
+    {
+        id: 'mehmed-2',
+        type: 'character',
+        name: 'Sultan Mehmed II',
+        aliases: ['Mehmed II', 'Mehmed', 'Fatih', 'Fatih Sultan Mehmed', 'İkinci Mehmed', 'Sultan İkinci Mehmed', 'Mehmed the Conqueror'],
+        visual: 'young man of 21, slim face, prominent aquiline nose, short dark beard, piercing dark eyes, tall white turban, crimson and gold kaftan, ornate gilded armor in war scenes',
+        notes: 'Doğum 1432. Saltanat 1444–1446 ve 1451–1481. İstanbul\'u 29 Mayıs 1453\'te, 21 yaşında fethetti; Ayasofya\'yı camiye çevirdi.',
+    },
+    {
+        id: 'suleyman-1',
+        type: 'character',
+        name: 'Sultan Suleiman the Magnificent',
+        aliases: ['Suleiman', 'Süleyman', 'Kanuni', 'Kanuni Sultan Süleyman', 'Suleiman the Magnificent'],
+        visual: 'man in his 40s, long thin face, aquiline nose, neat dark beard and moustache, very large white turban with a jeweled aigrette, white and gold silk kaftan',
+        notes: 'Saltanat 1520–1566; en uzun saltanat. 1529 Viyana kuşatması, 1534 Bağdat. "Kanuni" lakabı kanunnamelerinden.',
+    },
+
+    // ═══ MEKÂNLAR ═══
+    {
+        id: 'hagia-sophia',
+        type: 'location',
+        name: 'Hagia Sophia',
+        aliases: ['Ayasofya'],
+        visual: 'massive central dome on pendentives, rows of small arched windows at the dome base, red-ochre exterior walls, golden Byzantine mosaics inside',
+        notes: 'Bizans katedrali, 1453\'te camiye çevrildi. Minareler fetihten sonra eklendi.',
+    },
+    {
+        id: 'theodosian-walls',
+        type: 'location',
+        name: 'Theodosian Walls',
+        aliases: ['Theodosian walls', 'Theodosius surları', 'kara surları'],
+        visual: 'triple defensive line of Constantinople: moat, low outer wall and tall inner wall with square and octagonal towers, layered limestone and red brick bands',
+        notes: '5. yüzyıl, bin yıl düşmedi. 1453\'te Şahi toplarıyla dövüldü.',
+    },
+];
