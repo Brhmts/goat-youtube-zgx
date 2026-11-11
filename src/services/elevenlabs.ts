@@ -1,22 +1,24 @@
 import { completeTask, createTask, MODELS } from './kie';
 import { writeResponseToFile } from './http';
+import type { Voice } from '../series/schema';
 
 const ELEVENLABS_BASE_URL = 'https://api.elevenlabs.io/v1';
 
 // Kie.ai takes ElevenLabs voice *names* ("Daniel", "Aria"...),
-// the direct ElevenLabs API takes voice *IDs*.
-const kieVoiceName = () => process.env.ELEVENLABS_VOICE_NAME || 'Daniel';
-const directVoiceId = () => process.env.ELEVENLABS_VOICE_ID || 'onwK4e9ZLuTAKqWW03F9'; // "Daniel"
+// the direct ElevenLabs API takes voice *IDs*. Both come from series.json (per character).
+const DEFAULT_KIE_VOICE = 'Daniel';
+const DEFAULT_VOICE_ID = 'onwK4e9ZLuTAKqWW03F9'; // "Daniel"
 
-const VOICE_SETTINGS = { stability: 0.5, similarity_boost: 0.75 };
+const settingsFor = (voice?: Voice) => ({ stability: voice?.stability ?? 0.5, similarity_boost: 0.75 });
 
 // ── Kie.ai proxy TTS ────────────────────────────────────────────
-const generateVoiceViaKie = async (text: string, outputPath: string): Promise<boolean> => {
-    console.log(`[TTS/Kie] Creating task for ${text.length} chars...`);
+const generateVoiceViaKie = async (text: string, outputPath: string, voice?: Voice): Promise<boolean> => {
+    const name = voice?.kie ?? DEFAULT_KIE_VOICE;
+    console.log(`[TTS/Kie] ${name}: ${text.length} chars...`);
 
     const taskId = await createTask({
         model: MODELS.TTS,
-        input: { text, voice: kieVoiceName(), ...VOICE_SETTINGS, speed: 1.0 },
+        input: { text, voice: name, ...settingsFor(voice), speed: voice?.speed ?? 1.0 },
     });
     if (!taskId) return false;
 
@@ -26,11 +28,14 @@ const generateVoiceViaKie = async (text: string, outputPath: string): Promise<bo
 };
 
 // ── Direct ElevenLabs TTS ───────────────────────────────────────
-const generateVoiceDirect = async (text: string, outputPath: string): Promise<boolean> => {
+const generateVoiceDirect = async (text: string, outputPath: string, voice?: Voice): Promise<boolean> => {
+    if (voice?.kie && !voice.elevenLabsId) {
+        console.warn(`[TTS/Direct] "${voice.kie}" için elevenLabsId yok; doğrudan API varsayılan sesi kullanacak.`);
+    }
     console.log(`[TTS/Direct] Generating for ${text.length} chars...`);
 
     try {
-        const res = await fetch(`${ELEVENLABS_BASE_URL}/text-to-speech/${directVoiceId()}`, {
+        const res = await fetch(`${ELEVENLABS_BASE_URL}/text-to-speech/${voice?.elevenLabsId ?? DEFAULT_VOICE_ID}`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -39,7 +44,7 @@ const generateVoiceDirect = async (text: string, outputPath: string): Promise<bo
             body: JSON.stringify({
                 text,
                 model_id: 'eleven_multilingual_v2',
-                voice_settings: VOICE_SETTINGS,
+                voice_settings: { ...settingsFor(voice), speed: voice?.speed ?? 1.0 },
             }),
         });
         if (!res.ok) {
@@ -57,7 +62,7 @@ const generateVoiceDirect = async (text: string, outputPath: string): Promise<bo
 
 // ── Public API ──────────────────────────────────────────────────
 /** Generates narration. Tries Kie.ai first, then direct ElevenLabs if that key is set. */
-export const generateVoice = async (text: string, outputPath: string): Promise<boolean> => {
+export const generateVoice = async (text: string, outputPath: string, voice?: Voice): Promise<boolean> => {
     const hasKie = Boolean(process.env.KIE_AI_API_KEY);
     const hasDirect = Boolean(process.env.ELEVENLABS_API_KEY);
 
@@ -66,11 +71,11 @@ export const generateVoice = async (text: string, outputPath: string): Promise<b
         return false;
     }
 
-    if (hasKie && (await generateVoiceViaKie(text, outputPath))) return true;
+    if (hasKie && (await generateVoiceViaKie(text, outputPath, voice))) return true;
 
     if (hasDirect) {
         if (hasKie) console.warn('[TTS] Kie.ai failed, falling back to direct ElevenLabs...');
-        return generateVoiceDirect(text, outputPath);
+        return generateVoiceDirect(text, outputPath, voice);
     }
 
     return false;

@@ -1,0 +1,78 @@
+{
+  "number": 1,
+  "title": "Pilot (ÖRNEK — kendi senaryonuzla değiştirin)",
+  "summary": "Biçim örneği: kediler İstanbul videolarını görür ve yola çıkmaya karar verir.",
+  "scenes": [
+    {
+      "id": 1,
+      "description": "Moskova'da karlı bir arka sokak, kediler bir telefonda İstanbul kedisi videosu izliyor",
+      "imagePrompt": "Five street cats huddled around a dropped smartphone in a snowy Moscow back alley at dusk, the screen glowing with a video of a happy cat in Istanbul, warm light on their faces, cold blue snowy surroundings",
+      "cast": [
+        "kedi-1",
+        "kedi-2",
+        "kedi-3",
+        "kedi-4",
+        "kedi-5"
+      ],
+      "animation": "slowZoomIn",
+      "lines": [
+        {
+          "speaker": "narrator",
+          "text": "Moskova. Eksi yirmi derece."
+        },
+        {
+          "speaker": "kedi-1",
+          "text": "Şuna bakın! İstanbul'da kedilere yemek veriyorlar, fotoğraf çekiyorlar..."
+        },
+        {
+          "speaker": "kedi-2",
+          "text": "Bizim burada tek sevenimiz çöp kamyonu."
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "description": "Kedi 3 bir harita çiziyor",
+      "imagePrompt": "Close-up of a cat drawing a route from Moscow to Istanbul on a crumpled paper map with its paw, other cats watching over its shoulder, cozy hiding spot under a staircase",
+      "cast": [
+        "kedi-3"
+      ],
+      "animation": "panRight",
+      "lines": [
+        {
+          "speaker": "kedi-3",
+          "text": "Plan basit. Güneye gideriz. Çok güneye."
+        },
+        {
+          "speaker": "kedi-4",
+          "text": "Ne kadar güney?"
+        },
+        {
+          "speaker": "kedi-3",
+          "text": "Balık kokusu gelene kadar.",
+          "pauseAfter": 0.8
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "description": "Kararlı bakışlar, yola çıkış",
+      "imagePrompt": "Five cats walking in a line along snowy railway tracks toward a sunrise on the horizon, determined expressions, epic wide shot",
+      "cast": [
+        "kedi-1",
+        "kedi-2",
+        "kedi-3",
+        "kedi-4",
+        "kedi-5"
+      ],
+      "animation": "slowZoomOut",
+      "minDuration": 4,
+      "lines": [
+        {
+          "speaker": "kedi-5",
+          "text": "İstanbul... geliyoruz!"
+        }
+      ]
+    }
+  ]
+}

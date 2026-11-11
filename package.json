@@ -16,7 +16,8 @@
     "react": "19.2.3",
     "react-dom": "19.2.3",
     "remotion": "4.0.420",
-    "tailwindcss": "4.0.0"
+    "tailwindcss": "4.0.0",
+    "zod": "3.22.3"
   },
   "devDependencies": {
     "@remotion/eslint-config-flat": "4.0.420",
@@ -32,9 +33,11 @@
     "build": "remotion bundle",
     "upgrade": "remotion upgrade",
     "lint": "eslint src && tsc",
+    "check": "tsx scripts/check.ts",
+    "model-sheet": "tsx scripts/model-sheet.ts",
     "generate-assets": "tsx scripts/generate-assets.ts",
     "render": "tsx scripts/render-video.ts",
-    "codex": "tsx scripts/codex-report.ts"
+    "migrate-legacy": "tsx scripts/migrate-legacy.ts"
   },
   "sideEffects": [
     "*.css"

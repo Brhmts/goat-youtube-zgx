@@ -1,0 +1,19 @@
+{
+  "id": "ai-wars",
+  "title": "Yapay Zekâ Savaşları",
+  "language": "tr",
+  "style": {
+    "suffix": "cinematic hyper-realistic documentary still, dramatic lighting, consistent color grading"
+  },
+  "narrator": {
+    "name": "Anlatıcı",
+    "voice": {
+      "kie": "Daniel"
+    }
+  },
+  "codex": [],
+  "generation": {
+    "costMode": "budget",
+    "videoClips": false
+  }
+}

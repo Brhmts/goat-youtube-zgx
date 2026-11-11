@@ -2,22 +2,21 @@ import "./index.css";
 import { Composition } from "remotion";
 import { VideoComposition } from "./VideoComposition";
 import { calculateVideoMetadata } from "./calculate-metadata";
-import { FPS, HEIGHT, WIDTH } from "./config";
-import { currentVideo } from "./data/current-video";
+import { DEFAULT_EPISODE, FPS, HEIGHT, WIDTH } from "./config";
+import type { VideoProps } from "./types/props";
 
+// Which episode is shown: Studio → props panel { "episode": "<series>/<NN>" },
+// render → npm run render -- <series>/<NN>
 export const RemotionRoot: React.FC = () => {
-  // Placeholder only — calculateMetadata replaces it with the real length.
-  const minDuration = currentVideo.scenes.reduce((acc, scene) => acc + Math.ceil(scene.duration * FPS), 0);
-
   return (
     <Composition
       id="Video"
       component={VideoComposition}
-      durationInFrames={minDuration}
+      durationInFrames={FPS} // replaced by calculateMetadata
       fps={FPS}
       width={WIDTH}
       height={HEIGHT}
-      defaultProps={{ resolvedScenes: [] }}
+      defaultProps={{ episode: DEFAULT_EPISODE } satisfies VideoProps}
       calculateMetadata={calculateVideoMetadata}
     />
   );

@@ -37,6 +37,8 @@ export interface ImageGenOptions {
     aspectRatio?: string;    // 1:1 | 9:16 | 16:9 | 3:2 | 4:3 | 21:9 etc.
     resolution?: '1K' | '2K' | '4K';
     outputFormat?: 'jpg' | 'png';
+    /** Reference image URLs (max 14) — character sheets, style frames. */
+    imageInput?: string[];
     model?: string;
 }
 
@@ -102,10 +104,11 @@ export const createImageTask = async (opts: ImageGenOptions): Promise<string | n
         aspectRatio = '16:9',
         resolution = '2K',
         outputFormat = 'jpg',
+        imageInput = [],
         model = MODELS.IMAGE,
     } = opts;
 
-    console.log(`[IMAGE] Creating task with ${model} | ${resolution} | ${aspectRatio}`);
+    console.log(`[IMAGE] Creating task with ${model} | ${resolution} | ${aspectRatio} | ${imageInput.length} refs`);
 
     return createTask({
         model,
@@ -114,6 +117,7 @@ export const createImageTask = async (opts: ImageGenOptions): Promise<string | n
             aspect_ratio: aspectRatio,
             resolution,
             output_format: outputFormat,
+            ...(imageInput.length > 0 ? { image_input: imageInput } : {}),
         },
     });
 };

@@ -1,15 +1,15 @@
-import { AbsoluteFill, Audio, interpolate, staticFile, useCurrentFrame, useVideoConfig } from 'remotion';
+import { AbsoluteFill, Audio, interpolate, Sequence, staticFile, useCurrentFrame, useVideoConfig } from 'remotion';
 import React from 'react';
 import { FADE_FRAMES } from '../config';
+import type { ResolvedLine } from '../types/props';
 
 interface SceneOverlayProps {
-    audioSrc?: string | null;
-    subtitle?: string;
+    lines: ResolvedLine[];
     title?: string;
 }
 
-/** Narration, lower-third title, subtitles and the fade in/out shared by every scene type. */
-export const SceneOverlay: React.FC<SceneOverlayProps> = ({ audioSrc, subtitle, title }) => {
+/** Dialogue (one recording + subtitle per line), lower-third title and the fade in/out shared by every scene type. */
+export const SceneOverlay: React.FC<SceneOverlayProps> = ({ lines, title }) => {
     const frame = useCurrentFrame();
     const { durationInFrames } = useVideoConfig();
 
@@ -23,16 +23,21 @@ export const SceneOverlay: React.FC<SceneOverlayProps> = ({ audioSrc, subtitle, 
 
     return (
         <>
-            {audioSrc && <Audio src={staticFile(audioSrc)} />}
+            {lines.map((line, i) => (
+                <Sequence key={i} from={line.from} durationInFrames={line.durationInFrames} layout="none">
+                    {line.audioSrc && <Audio src={staticFile(line.audioSrc)} />}
+                    <Subtitle line={line} opacity={opacity} />
+                </Sequence>
+            ))}
 
             {title && (
-                <AbsoluteFill style={{ justifyContent: 'flex-end', padding: 60, paddingBottom: 160 }}>
+                <AbsoluteFill style={{ justifyContent: 'flex-start', padding: 60 }}>
                     <div
                         style={{
                             backgroundColor: 'rgba(0,0,0,0.7)',
-                            padding: '28px',
+                            padding: '24px 28px',
                             borderRadius: '14px',
-                            borderLeft: '7px solid #d4af37', // Gold accent
+                            borderLeft: '7px solid #d4af37',
                             color: 'white',
                             fontFamily: 'sans-serif',
                             width: 'fit-content',
@@ -47,29 +52,33 @@ export const SceneOverlay: React.FC<SceneOverlayProps> = ({ audioSrc, subtitle, 
                 </AbsoluteFill>
             )}
 
-            {subtitle && (
-                <AbsoluteFill style={{ justifyContent: 'flex-end', alignItems: 'center', paddingBottom: 70 }}>
-                    <div
-                        style={{
-                            fontFamily: 'sans-serif',
-                            fontSize: 46,
-                            lineHeight: 1.3,
-                            color: 'white',
-                            textShadow: '2px 2px 4px rgba(0,0,0,0.8)',
-                            textAlign: 'center',
-                            maxWidth: '80%',
-                            backgroundColor: 'rgba(0,0,0,0.5)',
-                            padding: '14px 28px',
-                            borderRadius: '12px',
-                            opacity,
-                        }}
-                    >
-                        {subtitle}
-                    </div>
-                </AbsoluteFill>
-            )}
-
             <AbsoluteFill style={{ backgroundColor: 'black', opacity: 1 - opacity }} />
         </>
     );
 };
+
+const Subtitle: React.FC<{ line: ResolvedLine; opacity: number }> = ({ line, opacity }) => (
+    <AbsoluteFill style={{ justifyContent: 'flex-end', alignItems: 'center', paddingBottom: 70 }}>
+        <div
+            style={{
+                fontFamily: 'sans-serif',
+                fontSize: 46,
+                lineHeight: 1.3,
+                color: 'white',
+                textShadow: '2px 2px 4px rgba(0,0,0,0.8)',
+                textAlign: 'center',
+                maxWidth: '80%',
+                backgroundColor: 'rgba(0,0,0,0.55)',
+                padding: '14px 28px',
+                borderRadius: '12px',
+                fontStyle: line.speakerName ? 'normal' : 'italic', // narrator = italic, no name
+                opacity,
+            }}
+        >
+            {line.speakerName && (
+                <span style={{ color: line.color ?? '#ffd166', fontWeight: 'bold', marginRight: 14 }}>{line.speakerName}:</span>
+            )}
+            {line.text}
+        </div>
+    </AbsoluteFill>
+);
